@@ -1,0 +1,51 @@
+<div class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" *ngIf="reservations.length > 0">
+    <div class="bg-base rounded-lg shadow-lg p-6 w-11/12 md:w-1/2 relative">
+      <h2 class="text-xl font-semibold mb-4 text-pri">My Reservations</h2>
+      <table class="min-w-full border-collapse border border-gray-200">
+        <thead>
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 bg-sec text-white">Full Name</th>
+            <th class="border border-gray-300 px-4 py-2 bg-sec text-white">Facility Name</th>
+            <th class="border border-gray-300 px-4 py-2 bg-sec text-white">Price</th>
+            <th class="border border-gray-300 px-4 py-2 bg-sec text-white">Date</th>
+            <th class="border border-gray-300 px-4 py-2 bg-sec text-white">Start Time</th>
+            <th class="border border-gray-300 px-4 py-2 bg-sec text-white">End Time</th>
+            <th class="border border-gray-300 px-4 py-2 bg-sec text-white">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let reservation of displayedReservations">
+            <td class="border border-gray-300 px-4 py-2">{{ reservation.fullName }}</td>
+            <td class="border border-gray-300 px-4 py-2">{{ reservation.facilityName }}</td>
+            <td class="border border-gray-300 px-4 py-2">{{ reservation.price }}</td>
+            <td class="border border-gray-300 px-4 py-2">{{ reservation.reservationDate | date: 'shortDate' }}</td>
+            <td class="border border-gray-300 px-4 py-2">{{ reservation.startTime }}</td>
+            <td class="border border-gray-300 px-4 py-2">{{ reservation.endTime }}</td>
+            <td class="border border-gray-300 px-4 py-2" 
+                [ngClass]="{'status text-white': reservation.status === 'pending'}">
+              {{ reservation.status }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <!-- Pagination Controls -->
+      <div *ngIf="reservations.length > 5" class="mt-4 flex justify-between items-center">
+        <button class="px-4 py-2 bg-pri text-white rounded"
+                [disabled]="currentPage === 1"
+                (click)="previousPage()">
+          Previous
+        </button>
+        <span class="text-pri">{{ currentPage }} of {{ totalPages }}</span>
+        <button class="px-4 py-2 bg-pri text-white rounded"
+                [disabled]="currentPage === totalPages"
+                (click)="nextPage()">
+          Next
+        </button>
+        <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded" (click)="closeModal()">Close</button>
+      </div>
+  
+      
+    </div>
+  </div>
+  

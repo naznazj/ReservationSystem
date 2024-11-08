@@ -1,0 +1,199 @@
+<app-loading *ngIf="loading"></app-loading>
+
+<header class="w-full h-[100px] md:h-[100px] drop-shadow-md bg-white">
+  <nav class="h-full max-w-6xl mx-auto p-4 flex items-center justify-between">
+    <!-- Logo -->
+    <img class="w-[80px] md:w-[200px]" src="assets/log.png" alt="Logo">
+
+    <!-- Hamburger Menu Button (only visible on mobile) -->
+    <div class="block md:hidden">
+      <button title="toggleMobileMenu" (click)="toggleMobileMenu()" class="text-gray-800 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation Links for md and above -->
+    <ul class="hidden md:flex gap-10 ml-10">
+      <li *ngIf="isLoggedIn()">
+        <a [routerLink]="['/home']" class="text-gray-800 hover:text-blue-500">Home</a>
+      </li>
+      <li *ngIf="isLoggedIn()">
+        <a [routerLink]="['/facilities']" class="text-gray-800 hover:text-blue-500">Facilities</a>
+      </li>
+      <li *ngIf="isLoggedIn()">
+        <a [routerLink]="['/reservations']" class="text-gray-800 hover:text-blue-500">Reservations</a>
+      </li>
+      <li *ngIf="isLoggedIn()">
+        <a [routerLink]="['/notifications']" class="text-gray-800 hover:text-blue-500">Notifications</a>
+      </li>
+
+      <!-- Public links when not logged in -->
+      <li *ngIf="!isLoggedIn()">
+        <a [routerLink]="['/home']" class="text-gray-800 hover:text-blue-500">Home</a>
+      </li>
+      <li *ngIf="!isLoggedIn()">
+        <a [routerLink]="['/about']" class="text-gray-800 hover:text-blue-500">About</a>
+      </li>
+      <li *ngIf="!isLoggedIn()">
+        <a [routerLink]="['/faqs']" class="text-gray-800 hover:text-blue-500">FAQs</a>
+      </li>
+    </ul>
+
+    <!-- Login/Register or Profile/Logout Buttons for md and above -->
+    <div class="hidden md:flex mr-10 gap-4">
+      <ng-container *ngIf="!isLoggedIn()">
+        <button (click)="toggleLoginModal()" class="w-[100px] h-[40px] rounded-[5px] bg-pri text-base text-white">Login</button>
+        <button (click)="toggleRegisterModal()" class="w-[100px] h-[40px] rounded-[5px] bg-sec text-base text-white">Register</button>
+      </ng-container>
+
+      <ng-container *ngIf="isLoggedIn()">
+        <button [routerLink]="['/profile']" class="w-[100px] h-[40px] rounded-[5px] bg-pri text-base text-white">View Profile</button>
+        <button (click)="logout()" class="w-[100px] h-[40px] rounded-[5px] bg-sec text-base text-white">Logout</button>
+      </ng-container>
+    </div>
+  </nav>
+
+  <!-- Mobile Dropdown Menu (visible when hamburger is clicked) -->
+  <ul *ngIf="mobileMenuOpen" class="md:hidden bg-white shadow-lg flex flex-col items-center gap-4 p-4">
+    <li *ngIf="isLoggedIn()">
+      <a [routerLink]="['/home']" class="text-gray-800 hover:text-blue-500" (click)="toggleMobileMenu()">Home</a>
+    </li>
+    <li *ngIf="isLoggedIn()">
+      <a [routerLink]="['/facilities']" class="text-gray-800 hover:text-blue-500" (click)="toggleMobileMenu()">Facilities</a>
+    </li>
+    <li *ngIf="isLoggedIn()">
+      <a [routerLink]="['/reservations']" class="text-gray-800 hover:text-blue-500" (click)="toggleMobileMenu()">Reservations</a>
+    </li>
+    <li *ngIf="isLoggedIn()">
+      <a [routerLink]="['/notifications']" class="text-gray-800 hover:text-blue-500" (click)="toggleMobileMenu()">Notifications</a>
+    </li>
+    <li *ngIf="isLoggedIn()">
+      <button [routerLink]="['/profile']" class="text-gray-800 hover:text-blue-500 w-full" (click)="toggleMobileMenu()">View Profile</button>
+    </li>
+    <li *ngIf="isLoggedIn()">
+      <button (click)="logout()" class="text-gray-800 hover:text-blue-500 w-full">Logout</button>
+    </li>
+
+    <!-- Public links when not logged in -->
+    <li *ngIf="!isLoggedIn()">
+      <a [routerLink]="['/home']" class="text-gray-800 hover:text-blue-500" (click)="toggleMobileMenu()">Home</a>
+    </li>
+    <li *ngIf="!isLoggedIn()">
+      <a [routerLink]="['/about']" class="text-gray-800 hover:text-blue-500" (click)="toggleMobileMenu()">About</a>
+    </li>
+    <li *ngIf="!isLoggedIn()">
+      <a [routerLink]="['/faqs']" class="text-gray-800 hover:text-blue-500" (click)="toggleMobileMenu()">FAQs</a>
+    </li>
+
+    <!-- Mobile Login/Register Buttons -->
+    <li *ngIf="!isLoggedIn()" class="w-full flex flex-col gap-2">
+      <button (click)="toggleLoginModal(); toggleMobileMenu()" class="w-full h-[40px] rounded-[5px] bg-pri text-base text-white">Login</button>
+      <button (click)="toggleRegisterModal(); toggleMobileMenu()" class="w-full h-[40px] rounded-[5px] bg-sec text-base text-white">Register</button>
+    </li>
+  </ul>
+</header>
+
+<!-- Login Modal (conditionally rendered) -->
+<div *ngIf="showLoginModal" (click)="toggleLoginModal()" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+    <div (click)="$event.stopPropagation()" class="bg-white p-8 rounded-lg w-[400px] drop-shadow-lg relative">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          class="absolute top-2 right-2 h-6 w-6 text-gray-600 cursor-pointer hover:text-red-500" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+          (click)="toggleLoginModal()" 
+          aria-label="Close"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M6 18L18 6M6 6l12 12" 
+          />
+        </svg>
+        <h2 class="text-2xl font-bold text-center text-pri mb-4">Cogon Reservation System - Login</h2>
+        <form (ngSubmit)="onLogin()">
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="email" [(ngModel)]="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter email" required>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" [(ngModel)]="password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="w-full bg-pri text-white font-semibold py-2 px-4 rounded hover:bg-green-700 transition">Sign In</button>
+        </form>
+        <div class="mt-4 text-center">
+            <a (click)="toggleRegisterModal(); toggleLoginModal()" class="text-sm text-gray-600 hover:underline">Don't have an account? Create one.</a>
+        </div>
+    </div>
+</div>
+
+<!-- Register Modal (conditionally rendered) -->
+<div *ngIf="showRegisterModal" (click)="toggleRegisterModal()" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+  <div (click)="$event.stopPropagation()" class="bg-white p-8 h-[90vh] max-h-[90vh] overflow-y-auto rounded-lg w-[900px] drop-shadow-lg relative">
+      <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          class="absolute top-2 right-2 h-6 w-6 text-gray-600 cursor-pointer hover:text-red-500" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+          (click)="toggleRegisterModal()" 
+          aria-label="Close"
+      >
+          <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M6 18L18 6M6 6l12 12" 
+          />
+      </svg>
+      <h2 class="text-2xl font-bold text-center text-sec mb-4">Cogon Reservation System - Register</h2>
+      <form (ngSubmit)="onRegister()" class="grid grid-cols-2 gap-4">
+          <div class="mb-4">
+              <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+              <input type="text" id="username" [(ngModel)]="username" name="username" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter username" required>
+          </div>
+          <div class="mb-4">
+              <label for="reg-email" class="block text-sm font-medium text-gray-700">Email</label>
+              <input type="email" id="reg-email" [(ngModel)]="regEmail" name="regEmail" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter email" required>
+          </div>
+          <div class="mb-4">
+              <label for="first-name" class="block text-sm font-medium text-gray-700">First Name</label>
+              <input type="text" id="first-name" [(ngModel)]="firstName" name="firstName" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter first name" required>
+          </div>
+          <div class="mb-4">
+              <label for="last-name" class="block text-sm font-medium text-gray-700">Last Name</label>
+              <input type="text" id="last-name" [(ngModel)]="lastName" name="lastName" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter last name" required>
+          </div>
+          <div class="mb-4">
+              <label for="birthday" class="block text-sm font-medium text-gray-700">Birthday</label>
+              <input type="date" id="birthday" [(ngModel)]="birthday" name="birthday" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+          </div>
+          <div class="mb-4">
+              <label for="contact-number" class="block text-sm font-medium text-gray-700">Contact Number</label>
+              <input type="tel" id="contact-number" [(ngModel)]="contactNumber" name="contactNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter contact number" required>
+          </div>
+          <div class="mb-4 col-span-1"> <!-- Make address field span two columns -->
+              <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+              <input type="text" id="address" [(ngModel)]="address" name="address" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter address" required>
+          </div>
+          <div class="mb-6 col-span-1"> <!-- Make password field span two columns -->
+              <label for="reg-password" class="block text-sm font-medium text-gray-700">Password</label>
+              <input type="password" id="reg-password" [(ngModel)]="regPassword" name="regPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter password" required>
+          </div>
+          <button type="submit" class="w-full bg-sec text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 transition col-span-2"> <!-- Make button span two columns -->
+              <span *ngIf="!loading">Register</span>
+              <span *ngIf="loading" class="animate-spin">Loading...</span>
+          </button>
+      </form>
+      <div class="mt-4 text-center col-span-2"> <!-- Make link span two columns -->
+          <a (click)="toggleLoginModal(); toggleRegisterModal()" class="text-sm text-gray-600 hover:underline">Already have an account? Login here.</a>
+      </div>
+  </div>
+</div>
+
+<app-error-modal></app-error-modal>

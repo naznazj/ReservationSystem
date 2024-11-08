@@ -1,0 +1,39 @@
+<div class="bg-white p-8">
+    <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-12">Frequently Asked Questions</h1>
+  
+    <div class="flex justify-center mb-8">
+      <iframe
+        title="Faqs"
+        src="https://lottie.host/embed/e2b1ac86-bb70-4e2e-9bff-70f44a795ac6/QbmyMfSaIg.json"
+        class="w-full max-w-xl h-auto rounded-lg shadow-md"
+      ></iframe>
+    </div>
+  
+    <!-- FAQ items in a 2-column layout on medium screens and larger -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div *ngFor="let faq of faqs" class="faq-item bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+        <div class="flex items-center justify-between cursor-pointer">
+          <!-- Icon for question -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-gray-600 transform transition-transform duration-300 hover:rotate-180"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m0 0L8 6m4 0l4 4m0 14h-4m4 0H8m0 0v-4M8 18V6a2 2 0 012-2h4a2 2 0 012 2v12m-4 4h4"></path>
+          </svg>
+          <h2 class="text-1xl font-semibold text-gray-800">{{
+            faq.question
+          }}</h2>
+        </div>
+  
+        <!-- Answer Section -->
+        <div class="mt-4 text-md text-gray-600">
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  

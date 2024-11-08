@@ -1,0 +1,40 @@
+<div class="w-64 bg-white h-screen p-5 flex flex-col">
+    <!-- Sidebar -->
+    <div class="m-4">
+        <h1 class="text-3xl font-bold mb-8"> {{ pageTitle }} </h1>
+        <ul class="space-y-4 mt-12">
+            <li class="flex items-center">
+                <img src="assets/svg/dashboard.svg" alt="Home Icon" class="h-7 w-7 text-gray-600 mr-2">
+                <a routerLink="/admin-dashboard" class="text-gray-700 hover:text-gray-900 cursor-pointer">Admin Dashboard</a>
+            </li>
+            <li class="flex items-center">
+                <img src="assets/svg/users.svg" alt="Manage Users Icon" class="h-7 w-7 text-gray-600 mr-2">
+                <a routerLink="/admin-users" class="text-gray-700 hover:text-gray-900 cursor-pointer">Manage Users</a>
+            </li>
+            <li class="flex items-center">
+                <img src="assets/svg/facilities.svg" alt="Facilities Icon" class="h-7 w-7 text-gray-600 mr-2">
+                <a routerLink="/admin-facilities" class="text-gray-700 hover:text-gray-900 cursor-pointer">Manage Facilities</a>
+            </li>
+            <li class="flex items-center">
+                <img src="assets/svg/reserve.svg" alt="Reservations Icon" class="h-7 w-7 text-gray-600 mr-2">
+                <a routerLink="/admin-reservations" class="text-gray-700 hover:text-gray-900 cursor-pointer">Reservations</a>
+            </li>
+            <li class="flex items-center">
+                <img src="assets/svg/notif.svg" alt="Notifications Icon" class="h-7 w-7 text-gray-600 mr-2">
+                <a routerLink="/admin-notifications" class="text-gray-700 hover:text-gray-900 cursor-pointer">Notifications</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Profile and Logout Buttons at the Bottom -->
+    <div class="mt-auto mb-4">
+        <div class="flex items-center justify-center space-x-4">
+            <button class="bg-pri text-white rounded px-3 py-2 hover:bg-red-700 transition">
+                Profile
+            </button>
+            <button (click)="logout()" class="bg-sec text-white rounded px-3 py-2 hover:bg-red-600 transition">
+                Logout
+            </button>
+        </div>
+    </div>
+</div>

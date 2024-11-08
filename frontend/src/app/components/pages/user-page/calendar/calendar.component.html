@@ -1,0 +1,190 @@
+<div class="container max-w-6xl mx-auto p-4">
+  <!-- Period Navigator -->
+  <div class="flex justify-between mb-4">
+    <button (click)="openYearModal()" class="btn bg-pri text-white px-4 py-2 rounded">
+      Select Year
+    </button>
+    <div class="text-lg font-semibold">{{ currentPeriod }}</div>
+  </div>
+
+  <!-- Month Display and Selection -->
+  <div class="flex justify-between mb-4">
+    <button (click)="openMonthModal()" class="btn bg-sec text-white px-4 py-2 rounded">
+      Select Month
+    </button>
+  </div>
+  
+  <div class="calendar-container">
+
+    <div class="calendar-grid grid grid-cols-7 gap-2">
+      <!-- Days of the week -->
+      <div class="font-bold text-center">Sun</div>
+      <div class="font-bold text-center">Mon</div>
+      <div class="font-bold text-center">Tue</div>
+      <div class="font-bold text-center">Wed</div>
+      <div class="font-bold text-center">Thu</div>
+      <div class="font-bold text-center">Fri</div>
+      <div class="font-bold text-center">Sat</div>
+  
+      <!-- Loop through the monthDays array and display the days -->
+      <ng-container *ngFor="let day of monthDays; let i = index">
+        <!-- If the day is null (empty slot before the first day of the month), render an empty box -->
+        <div *ngIf="!day" class="empty-day bg-gray-200 h-12 border"></div>
+  
+        <!-- If the day is not null, render the actual day -->
+        <div 
+        *ngIf="day" 
+        class="day-box text-center bg-white border h-12 flex items-center justify-center cursor-pointer"
+        [ngClass]="{
+          'fully-unavailable': !isAvailable(day), 
+          'partially-reserved': isUnavailable(day), 
+          'available': isPartiallyReserved(getDayName(day)) 
+        }"
+        (click)="handleDayClick(day)">
+        {{ day }}
+      </div>
+      
+      </ng-container>
+    </div>
+  </div>
+  
+  
+
+  <div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+        <h2 class="text-lg font-bold mb-4">Select Time Slots for {{ formatDay(selectedDay!) }}</h2>
+        <label class="text-[0.8rem]" for="timeslot">
+            For more than one hour, select 2 time slots [The starting time and desired end time].
+        </label>
+        
+        <ul>
+          <li *ngFor="let slot of availableTimeSlots" 
+          (click)="selectTimeSlot(slot)" 
+          [ngClass]="{
+              'bg-blue-800': slot.start === selectedStartTime, 
+              'bg-green-800': slot.end === selectedEndTime
+          }" 
+          class="cursor-pointer hover:bg-gray-200 p-2 rounded">
+          {{ slot.start }} - {{ slot.end }}
+      </li>
+      
+        </ul>
+        <button (click)="isModalOpen = false" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Close</button>
+    </div>
+</div>
+
+
+
+
+
+<div *ngIf="isReservationModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-lg p-6 max-w-4xl w-full h-auto max-h-[80vh] overflow-y-auto">
+    <h2 class="text-xl font-bold mb-6 text-center">Create Reservation</h2>
+    <form (ngSubmit)="createReservation()">
+      <div class="grid grid-cols-2 gap-6">
+        <!-- Left Column: Pre-filled Data -->
+        <div class="mb-4">
+          <label class="block text-gray-700">Name</label>
+          <span class="block border border-gray-300 rounded p-2 w-full bg-gray-100">{{ currentUser.fullName }}</span>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700">Facility Name</label>
+          <span class="block border border-gray-300 rounded p-2 w-full bg-gray-100">{{ selectedFacilityName }}</span>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700">Price</label>
+          <span class="block border border-gray-300 rounded p-2 w-full bg-gray-100">Php{{ selectedFacilityPrice }}</span>
+        </div>
+
+        <!-- Inputs for Reservation Details -->
+        <div class="mb-4 col-span-1">
+          <label class="block text-gray-700">Reservation Date</label>
+          <input placeholder="Reservation Date" [value]="reservationData.reservationDate | date: 'yyyy-MM-dd'" name="reservationDate" readonly
+                 class="border border-gray-300 rounded p-2 w-full bg-gray-100" />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Start Time</label>
+        <input placeholder="Start Time" [(ngModel)]="selectedStartTime" name="startTime" readonly
+               class="border border-gray-300 rounded p-2 w-full bg-gray-100" />
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700">End Time</label>
+        <input placeholder="End Time" [(ngModel)]="selectedEndTime" name="endTime" readonly
+               class="border border-gray-300 rounded p-2 w-full bg-gray-100" />
+    </div>
+
+        <!-- Hidden Field for Facility ID -->
+        <input type="hidden" [(ngModel)]="reservationData.facilityId" name="facilityId" [value]="facilityId" />
+
+        <!-- Right Column: User Input Data -->
+        <div class="mb-4 col-span-2">
+          <label class="block text-gray-700">Address</label>
+          <input placeholder="Your Address" [(ngModel)]="reservationData.address" name="address" required
+                 class="border border-gray-300 rounded p-2 w-full" />
+        </div>
+        <div class="mb-4 col-span-2">
+          <label class="block text-gray-700">Contact Number</label>
+          <input placeholder="Your Contact Number" [(ngModel)]="reservationData.contactNumber" name="contactNumber"
+                 class="border border-gray-300 rounded p-2 w-full" />
+        </div>
+        <div class="mb-4 col-span-2">
+          <label class="block text-gray-700">Purpose</label>
+          <textarea placeholder="Purpose of Reservation" [(ngModel)]="reservationData.purpose" name="purpose" required
+                    class="border border-gray-300 rounded p-2 w-full"></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-5 justify-center">
+        <button type="submit" class="bg-pri text-white px-4 py-2 rounded mt-4">Reserve</button>
+        <button type="reset" (click)="isReservationModalOpen = false" class="mt-4 bg-sec text-white px-4 py-2 rounded">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+  <!-- Month Selection Modal -->
+  <div *ngIf="isMonthModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+      <h2 class="text-lg font-bold mb-4">Select Month</h2>
+      <ul>
+        <li *ngFor="let month of availableMonths; let index = index" (click)="selectMonth(index)" class="cursor-pointer hover:bg-gray-200 p-2 rounded">
+          {{ month }}
+        </li>
+      </ul>
+      <button (click)="closeMonthModal()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Close</button>
+    </div>
+  </div>
+
+  <!-- Year Selection Modal -->
+  <div *ngIf="isYearModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+      <h2 class="text-lg font-bold mb-4">Select Year</h2>
+      <ul>
+        <li *ngFor="let year of availableYears" (click)="selectYear(year)" class="cursor-pointer hover:bg-gray-200 p-2 rounded">
+          {{ year }}
+        </li>
+      </ul>
+      <button (click)="closeYearModal()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Close</button>
+    </div>
+  </div>
+</div>
+<app-success-modal
+  [message]="successMessage"
+  [title]="'Reservation Success'" 
+></app-success-modal>
+
+<app-error-modal
+  [errorMessage]="errorMessage"
+  [title]="'Reservation Error'" 
+></app-error-modal>
+
+

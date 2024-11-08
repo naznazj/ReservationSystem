@@ -1,0 +1,46 @@
+<app-header></app-header>
+<div class="container mx-auto py-8 max-w-6xl" *ngIf="facility; else loading">
+  <div class="flex flex-col md:flex-row gap-8">
+    
+    <!-- Left Column: Image and Facility Name -->
+    <div class="w-full md:w-1/2">
+      <div class="bg-base shadow-md rounded-lg overflow-hidden">
+        <img 
+          [src]="facility.imageUrl" 
+          alt="{{ facility.name }}" 
+          class="w-full h-96 object-cover"
+        >
+        <div class="p-4">
+          <h1 class="text-3xl font-bold mb-2 text-sec">{{ facility.name }}</h1>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column: Facility Details -->
+    <div class="w-full md:w-1/2 flex flex-col justify-between">
+      <div class="bg-base shadow-md rounded-lg p-6">
+        <p class="text-gray-600 text-lg mb-4 leading-relaxed">{{ facility.description }}</p>
+        
+        <div class="border-t border-gray-200 mt-4 pt-4">
+          <h2 class="text-xl font-semibold">Price: <span class="text-sec">Php{{ facility.price }}</span></h2>
+          <p class="text-black mt-2">Available from <strong>{{ facility.availability.startDay }}</strong> to <strong>{{ facility.availability.endDay }}</strong></p>
+          <p class="text-black">Time: <strong>{{ facility.availability.timeRange.startTime }}</strong> to <strong>{{ facility.availability.timeRange.endTime }}</strong></p>
+        </div>
+        
+        <button 
+          (click)="viewAvailability()" 
+          class="mt-6 w-full bg-pri text-white font-semibold py-2 px-4 rounded hover:bg-green-800 transition">
+          View Availability
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loading>
+  <div class="flex items-center justify-center h-64">
+    <p class="text-center text-lg text-gray-500">Loading facility details...</p>
+  </div>
+</ng-template>

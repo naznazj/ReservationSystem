@@ -1,0 +1,73 @@
+<app-header></app-header>
+
+<!-- Show this section only if user is not authenticated -->
+<div *ngIf="!isLoggedIn()" class="flex items-center justify-center bg-white max-w-6xl mx-auto h-screen px-6 space-x-10">
+  <iframe
+    title="animation"
+    class="h-[60%] w-[45%] max-w-sm md:max-w-md"
+    src="https://lottie.host/embed/06076a72-cac0-430c-9fb5-41e7945282fb/ltl4DNuccL.json"
+  ></iframe>
+
+  <div class="w-full max-w-lg p-8 bg-gray-100 rounded-lg shadow-xl">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">
+      Reserve Your Barangay Facilities
+    </h1>
+    <p class="text-lg text-gray-700 leading-relaxed mb-4">
+      Connect with your community and easily book spaces for events and gatherings.
+    </p>
+    <button class="mt-4 px-6 py-3 bg-pri text-white text-lg font-semibold rounded-full shadow-md hover:bg-pri transition duration-200">
+      Get Started
+    </button>
+  </div>
+</div>
+
+<!-- Show this section only if user is authenticated -->
+<div *ngIf="isLoggedIn()">
+    <div class="flex">
+      <!-- Latest Events Image Slider (50% width) -->
+      <div class="w-1/2 bg-white py-10 px-6">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Latest Events</h2>
+        <div id="eventSlider" class="relative">
+          <div class="flex overflow-hidden">
+            <div class="event-slide w-full flex-none">
+              <img src="assets/fasf.jpg" alt="Event 1" class="w-full rounded-lg shadow-lg">
+            </div>
+            <div class="event-slide w-full flex-none">
+              <img src="assets/123fsa.jpg" alt="Event 2" class="w-full rounded-lg shadow-lg">
+            </div>
+            <div class="event-slide w-full flex-none">
+              <img src="assets/123as.jpg" alt="Event 3" class="w-full rounded-lg shadow-lg">
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Community Impact & Stats (50% width) -->
+      <div class="w-1/2 bg-white py-10 px-6 text-center">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Community Impact & Stats</h2>
+        <div class="grid grid-cols-2 gap-6">
+          <div class="stat-card bg-gray-200 p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-semibold text-gray-800">Events Booked</h3>
+            <p class="text-3xl text-pri font-bold">{{ stats.eventsBooked }}</p>
+          </div>
+          <div class="stat-card bg-gray-200 p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-semibold text-gray-800">Facilities Reserved</h3>
+            <p class="text-3xl text-pri font-bold">{{ stats.facilitiesReserved }}</p>
+          </div>
+          <div class="stat-card bg-gray-200 p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-semibold text-gray-800">Happy Visitors</h3>
+            <p class="text-3xl text-pri font-bold">{{ stats.happyVisitors }}</p>
+          </div>
+          <div class="stat-card bg-gray-200 p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-semibold text-gray-800">Active Users</h3>
+            <p class="text-3xl text-pri font-bold">{{ stats.activeUsers }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<app-about *ngIf="!isLoggedIn()"></app-about>
+<app-faqs *ngIf="!isLoggedIn()"></app-faqs>
+<app-footer></app-footer>

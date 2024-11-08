@@ -1,0 +1,11 @@
+.partially-reserved {
+  background-color: green; /* Change this to your desired color */
+}
+
+.fully-unavailable {
+  background-color: #ffffff; /* Change this to your desired color */
+}
+
+.available {
+  background-color: #15803d; /* Change this to your desired color */
+}

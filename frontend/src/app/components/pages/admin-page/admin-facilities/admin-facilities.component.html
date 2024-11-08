@@ -1,0 +1,161 @@
+<!-- Main Layout -->
+<div class="flex">
+    <app-sidebar></app-sidebar>
+
+    <div class="mt-6 flex-1">
+        <!-- Loader -->
+        <app-loading *ngIf="isLoading"></app-loading>
+
+        <!-- Button to open the modal -->
+        <div class="ml-6 mb-4">
+            <button class="bg-pri text-white py-2 px-4 rounded" (click)="openModal()">Add Facility</button>
+        </div>
+
+        <!-- Table for facilities -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full border-collapse border border-gray-200 mx-auto" *ngIf="!isLoading">
+                <thead>
+                    <tr>
+                        <th class="border border-gray-200 px-4 py-2">Image</th>
+                        <th class="border border-gray-200 px-4 py-2">Name</th>
+                        <th class="border border-gray-200 px-4 py-2">Description</th>
+                        <th class="border border-gray-200 px-4 py-2">Price</th>
+                        <th class="border border-gray-200 px-4 py-2">Availability</th>
+                        <th class="border border-gray-200 px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="noDataAvailable">
+                        <td colspan="6" class="border border-gray-200 px-4 py-2 text-center text-gray-500">No data available</td>
+                    </tr>
+                    <tr *ngFor="let facility of paginatedFacilities">
+                        <td class="border border-gray-200 px-4 py-2 flex justify-center items-center">
+                            <ng-container *ngIf="facility.imageUrl; else noImage">
+                                <img [src]="facility.imageUrl" 
+                                     alt="Facility Image" 
+                                     class="w-16 h-16 rounded object-cover"> <!-- Adjusted size -->
+                            </ng-container>
+                            <ng-template #noImage>
+                                <span>No Image Available</span>
+                            </ng-template>
+                        </td>
+                        <td class="border border-gray-200 px-4 py-2">{{ facility.name }}</td>
+                        <td class="border border-gray-200 px-4 py-2">{{ facility.description }}</td>
+                        <td class="border border-gray-200 px-4 py-2">{{ facility.price }}</td>
+                        <td class="border border-gray-200 px-4 py-2">
+                            {{ facility.availability.startDay }} to {{ facility.availability.endDay }}<br>
+                            {{ facility.availability.timeRange.startTime }} - {{ facility.availability.timeRange.endTime }}
+                        </td>
+                        <td class="border border-gray-200 px-4 py-2">
+                            <div class="flex gap-2 justify-center">
+                                <button (click)="editFacility(facility._id ? facility._id : null)" class="bg-pri text-white py-1 px-2 rounded">Edit</button>
+                                <button (click)="deleteFacility(facility._id ? facility._id : null)" class="bg-sec text-white py-1 px-2 rounded">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div *ngIf="facilities.length > itemsPerPage" class="flex justify-center gap-4 mt-4">
+            <button (click)="previousPage()" [disabled]="currentPage === 1" class="bg-sec text-white py-1 px-3 rounded">Previous</button>
+            <button (click)="nextPage()" [disabled]="(currentPage * itemsPerPage) >= facilities.length" class="bg-sec text-white py-1 px-3 rounded">Next</button>
+        </div>
+    </div>
+
+    <!-- Modal and Form remain the same... -->
+</div>
+
+<!-- Facility Form Modal -->
+<div *ngIf="showModal" (click)="closeModal()" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+    <div (click)="$event.stopPropagation()"
+         class="bg-white p-6 rounded-lg w-[90vw] max-w-[700px] drop-shadow-lg relative overflow-auto">
+        <!-- Close button -->
+        <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-800" (click)="closeModal()">&times;</button>
+
+        <h2 class="text-2xl font-semibold text-center mb-6 bg-pri text-white py-2 rounded">Fill out form</h2>
+
+        <form (ngSubmit)="addFacility()" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Image Upload Section -->
+            <div class="flex flex-col items-center justify-between col-span-1 border p-2 rounded border-gray-300 bg-gray-100">
+                <div *ngIf="imagePreviewUrl" class="w-full h-32 flex items-center justify-center border border-gray-200 rounded">
+                    <img [src]="imagePreviewUrl" alt="Image Preview" class="max-h-full max-w-full rounded">
+                </div>
+                <div *ngIf="!imagePreviewUrl" class="w-full h-32 flex items-center justify-center border border-gray-200 rounded bg-gray-200">
+                    <p class="text-sm text-gray-500">No Image Selected</p>
+                </div>
+
+                <div class="mt-4 w-full">
+                    <input title="image" type="file" id="image" class="p-2 w-full cursor-pointer bg-white border border-gray-300 rounded focus:outline-none"
+                        (change)="onFileSelected($event)" accept="image/png, image/jpeg" required>
+                </div>
+            </div>
+
+            <!-- Facility/Asset Name Input -->
+            <div class="flex flex-col col-span-2">
+                <label for="name" class="mb-1 text-sm text-gray-700">Facility/Asset Name:</label>
+                <input type="text" id="name" class="border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-600"
+                    [(ngModel)]="facility.name" name="name" required>
+            </div>
+
+            <!-- Facility/Asset Description Input -->
+            <div class="flex flex-col col-span-2">
+                <label for="description" class="mb-1 text-sm text-gray-700">Facility/Asset Description:</label>
+                <textarea id="description" rows="1" class="border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-600"
+                    [(ngModel)]="facility.description" name="description" required></textarea>
+            </div>
+
+            <!-- Price Input -->
+            <div class="flex flex-col col-span-1">
+                <label for="price" class="mb-1 text-sm text-gray-700">Price:</label>
+                <input type="number" id="price" class="border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-600"
+                    [(ngModel)]="facility.price" name="price" required>
+            </div>
+
+            <!-- Start Day Input -->
+            <div class="flex flex-col col-span-1">
+                <label for="startDay" class="mb-1 text-sm text-gray-700">Start Day:</label>
+                <select id="startDay" class="border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-600"
+                    [(ngModel)]="facility.availability.startDay" name="startDay" required>
+                    <option value="" disabled>Select start day</option>
+                    <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+            </div>
+
+            <!-- End Day Input -->
+            <div class="flex flex-col col-span-1">
+                <label for="endDay" class="mb-1 text-sm text-gray-700">End Day:</label>
+                <select id="endDay" class="border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-600"
+                    [(ngModel)]="facility.availability.endDay" name="endDay" required>
+                    <option value="" disabled>Select end day</option>
+                    <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+            </div>
+
+            <!-- Start Time Input -->
+            <div class="flex flex-col col-span-1">
+                <label for="startTime" class="mb-1 text-sm text-gray-700">Start Time:</label>
+                <input type="time" id="startTime" class="border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-600"
+                    [(ngModel)]="facility.availability.timeRange.startTime" name="startTime" required>
+            </div>
+
+            <!-- End Time Input -->
+            <div class="flex flex-col col-span-1">
+                <label for="endTime" class="mb-1 text-sm text-gray-700">End Time:</label>
+                <input type="time" id="endTime" class="border border-gray-300 p-2 rounded focus:outline-none focus:ring focus:border-blue-600"
+                    [(ngModel)]="facility.availability.timeRange.endTime" name="endTime" required>
+            </div>
+
+            <div class="col-span-3">
+                <button type="submit" class="bg-pri text-white py-2 px-4 rounded w-full hover:bg-blue-700">Add Facility</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<app-error-modal *ngIf="showErrorModal" [message]="errorMessage" (close)="closeErrorModal()"></app-error-modal>
+
+<!-- Success Modal -->
+<app-success-modal *ngIf="showSuccessModal" [message]="successMessage" (close)="closeSuccessModal()"></app-success-modal>

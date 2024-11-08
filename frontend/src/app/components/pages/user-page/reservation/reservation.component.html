@@ -1,0 +1,15 @@
+<app-header></app-header>
+
+<div class="container mx-auto py-8 px-4">
+    <div class="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800 text-center">Your Reservations</h2>
+        <p class="text-gray-600 text-center mb-6">Manage and view your current reservations.</p>
+
+        <button (click)="viewUserReservations()"
+            class="w-full bg-pri hover:bg-sec text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+            View My Reservations
+        </button>
+
+        <app-user-reservation *ngIf="showModal" [userId]="userId" (close)="closeModal()"></app-user-reservation>
+    </div>
+</div>

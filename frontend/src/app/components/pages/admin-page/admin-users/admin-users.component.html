@@ -1,0 +1,51 @@
+<div class="flex">
+<app-sidebar></app-sidebar>
+<div class="mt-16 min-w-[1000px] mx-auto">
+  <h1 class="text-2xl font-bold mb-4">User List</h1>
+
+  <div *ngIf="loading" class="text-center">
+    <p>Loading users...</p>
+  </div>
+
+  <div *ngIf="error" class="text-red-500 text-center">
+    <p>{{ error }}</p>
+  </div>
+
+  <table class="min-w-full border border-gray-200">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="px-4 py-2">Username</th>
+        <th class="px-4 py-2">Email</th>
+        <th class="px-4 py-2">First Name</th>
+        <th class="px-4 py-2">Last Name</th>
+        <th class="px-4 py-2">Phone Number</th>
+        <th class="px-4 py-2">Address</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of paginatedUsers">
+        <td class="border px-4 py-2">{{ user.username }}</td>
+        <td class="border px-4 py-2">{{ user.email }}</td>
+        <td class="border px-4 py-2">{{ user.firstName }}</td>
+        <td class="border px-4 py-2">{{ user.lastName }}</td>
+        <td class="border px-4 py-2">{{ user.contactNumber }}</td>
+        <td class="border px-4 py-2">{{ user.address }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flex justify-between mt-4">
+    <button 
+      [disabled]="currentPage === 1" 
+      (click)="changePage(currentPage - 1)" 
+      class="bg-sec text-white px-4 py-2 rounded">Previous</button>
+    
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    
+    <button 
+      [disabled]="currentPage === totalPages" 
+      (click)="changePage(currentPage + 1)" 
+      class="bg-sec text-white px-4 py-2 rounded">Next</button>
+  </div>
+</div>
+</div>

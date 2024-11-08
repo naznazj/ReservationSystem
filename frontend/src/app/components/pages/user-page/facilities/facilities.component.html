@@ -1,0 +1,19 @@
+<app-header></app-header>
+<div class="container mx-auto py-8 max-w-6xl">
+  <h1 class="text-3xl font-bold mb-6 text-sec">Available Facilities</h1>
+
+  <app-loading *ngIf="isLoading"></app-loading> <!-- Show loading component -->
+
+  <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div *ngFor="let facility of facilities" class="bg-base shadow-md rounded-lg p-4 w-64 h-100">
+      <img [src]="facility.imageUrl" alt="{{ facility.name }}" class="w-32 h-32 object-cover mx-auto mb-4 rounded-md m-2">
+      <h2 class="text-lg font-semibold text-sec">{{ facility.name }}</h2>
+      <p class="text-black text-sm">{{ facility.description }}</p>
+      <button 
+        (click)="viewFacility(facility?._id)" 
+        class="mt-3 bg-pri text-white px-3 py-2 rounded hover:bg-green-800">
+        View Details
+      </button>
+    </div>
+  </div>
+</div>
